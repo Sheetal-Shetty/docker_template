@@ -46,8 +46,8 @@ spec:
                   title: Enter the details
                   type: object
                   properties:
-                    Dockerfile:
-                      title: Enter the Path of Dockerfile
+                    PlaybookPath:
+                      title: Enter the Path of PlaybookPath
                       type: string
                       description: Enter the Dockerfile path (e.g. build/Dockerfile or enter Dockerfile if it is in root) 
                       default: "Dockerfile" 
@@ -121,23 +121,23 @@ spec:
     #     command: |
     #       docker build -t my-image:latest .
 
-    - id: build_docker
-      name: Build Docker Image
-      if: ${{ parameters.stack == 'Docker' }}
-      action: shell:run
-      input:
-        cwd: ${{ steps.clone.output.path }}
-        command: docker 
-        args: ["build", "-f", "${{ parameters.extraFields.Dockerfile }}", "-t", "my-image:latest", "."]
+    # - id: build_docker
+    #   name: Build Docker Image
+    #   if: ${{ parameters.stack == 'Docker' }}
+    #   action: shell:run
+    #   input:
+    #     cwd: ${{ steps.clone.output.path }}
+    #     command: docker 
+    #     args: ["build", "-f", "${{ parameters.extraFields.Dockerfile }}", "-t", "my-image:latest", "."]
 
 
-    - id: cleanup
-      name: Remove old container if exists
-      if: ${{ parameters.stack == 'Docker' }}
-      action: shell:run
-      input:
-        command: docker
-        args: ["rm", "-f", "Cafe-container"]
+    # - id: cleanup
+    #   name: Remove old container if exists
+    #   if: ${{ parameters.stack == 'Docker' }}
+    #   action: shell:run
+    #   input:
+    #     command: docker
+    #     args: ["rm", "-f", "Cafe-container"]
                 
 
     - id: deploy_docker
@@ -146,8 +146,8 @@ spec:
       action: shell:run
       input:
         cwd: ${{ steps.clone.output.path }}
-        command: docker
-        args: ["run", "--name", "Cafe-container", "-it", "-d", "-p", "89:${{ parameters.extraFields.Port }}", "my-image:latest"]
+        command: ansible-playbook
+        args: ["${{ parameters.extraFields.PlaybookPath }}", "-i", "/cafe_app_ansible_bare_metal_deploy/hosts", "-c", "ssh", "-ask-pass", "-K"]
 
     # - id: run-echo
     #   name: Echo Test
