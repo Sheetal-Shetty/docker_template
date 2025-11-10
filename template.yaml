@@ -146,8 +146,17 @@ spec:
       action: shell:run
       input:
         cwd: ${{ steps.clone.output.path }}
-        command: ansible-playbook
-        args: ["${{ parameters.extraFields.PlaybookPath }}", "-i", "cafe_app_ansible_bare_metal_deploy/hosts", "-c", "ssh", "-ask-pass", "-K"]
+        command: bash
+        args: 
+          - -c
+          - |
+            set -euo pipefail
+            echo "🚀 Starting Ansible Playbook Deployment..."
+            PLAYBOOK_PATH="${{ parameters.extraFields.PlaybookPath }}"
+            echo "📘 Using playbook: $PLAYBOOK_PATH"
+            echo "🔑 Running with sudo and SSH authentication..."
+            sudo ansible-playbook "$PLAYBOOK_PATH" -i cafe_app_ansible_bare_metal_deploy/hosts -c ssh --ask-pass -K
+            echo "✅ Deployment completed successfully!"
 
     # - id: run-echo
     #   name: Echo Test
