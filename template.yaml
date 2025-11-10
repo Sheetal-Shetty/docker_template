@@ -147,7 +147,7 @@ spec:
       input:
         cwd: ${{ steps.clone.output.path }}
         command: ansible-playbook
-        args: ["${{ parameters.extraFields.PlaybookPath }}", "-i", "/cafe_app_ansible_bare_metal_deploy/hosts", "-c", "ssh", "-ask-pass", "-K"]
+        args: ["${{ parameters.extraFields.PlaybookPath }}", "-i", "cafe_app_ansible_bare_metal_deploy/hosts", "-c", "ssh", "-ask-pass", "-K"]
 
     # - id: run-echo
     #   name: Echo Test
