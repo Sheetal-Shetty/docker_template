@@ -131,33 +131,33 @@ spec:
     #     args: ["build", "-f", "${{ parameters.extraFields.Dockerfile }}", "-t", "my-image:latest", "."]
 
 
-    # - id: cleanup
-    #   name: Remove old container if exists
-    #   if: ${{ parameters.stack == 'Docker' }}
-    #   action: shell:run
-    #   input:
-    #     command: docker
-    #     args: ["rm", "-f", "Cafe-container"]
-                
-
-    - id: deploy_docker
-      name: Deploy Docker Container
+    - id: cleanup
+      name: Remove old container if exists
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.clone.output.path }}
-        command: bash
-        args: 
-          - -c
-          - |
-            set -euo pipefail
-            echo "🚀 Starting Ansible Playbook Deployment..."
-            PLAYBOOK_PATH="${{ parameters.extraFields.PlaybookPath }}"
-            echo "📘 Using playbook: $PLAYBOOK_PATH"
-            echo "🔑 Running with sudo and SSH authentication..."
-            sudo ansible-playbook cafe_app_ansible_bare_metal_deploy/playbook.yml -i cafe_app_ansible_bare_metal_deploy/hosts -c ssh \
-             --extra-vars "ansible_become_pass=$ANSIBLE_SUDO_PASS ansible_ssh_pass=$ANSIBLE_SSH_PASS"
-            echo "✅ Deployment completed successfully!"
+        command: ansible-playbook
+        args: ["cafe_app_ansible_bare_metal_deploy/playbook.yml", "-i", "cafe_app_ansible_bare_metal_deploy/hosts"]
+                
+
+    # - id: deploy_docker
+    #   name: Deploy Docker Container
+    #   if: ${{ parameters.stack == 'Docker' }}
+    #   action: shell:run
+    #   input:
+    #     cwd: ${{ steps.clone.output.path }}
+    #     command: bash
+    #     args: 
+    #       - -c
+    #       - |
+    #         set -euo pipefail
+    #         echo "🚀 Starting Ansible Playbook Deployment..."
+    #         PLAYBOOK_PATH="${{ parameters.extraFields.PlaybookPath }}"
+    #         echo "📘 Using playbook: $PLAYBOOK_PATH"
+    #         echo "🔑 Running with sudo and SSH authentication..."
+    #         sudo ansible-playbook cafe_app_ansible_bare_metal_deploy/playbook.yml -i cafe_app_ansible_bare_metal_deploy/hosts -c ssh \
+    #          --extra-vars "ansible_become_pass=$ANSIBLE_SUDO_PASS ansible_ssh_pass=$ANSIBLE_SSH_PASS"
+    #         echo "✅ Deployment completed successfully!"
 
     # - id: run-echo
     #   name: Echo Test
