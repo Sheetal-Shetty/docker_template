@@ -138,6 +138,15 @@ spec:
       input:
         command: ansible-playbook
         args: ["cafe_app_ansible_bare_metal_deploy/playbook.yml", "-i", "cafe_app_ansible_bare_metal_deploy/hosts"]
+
+
+    - id: restart
+      name: Remove old container if exists
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        command: sudo
+        args: ["systemctl", "restart", "apache2"]
                 
 
     # - id: deploy_docker
