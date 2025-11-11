@@ -49,14 +49,13 @@ spec:
                     PlaybookPath:
                       title: Enter the Path of PlaybookPath
                       type: string
-                      description: Enter the Dockerfile path (e.g. build/Dockerfile or enter Dockerfile if it is in root) 
+                      description: Enter the PlaybookPath
                       default: "Dockerfile" 
-                    Port:
-                      title: Enter the Port number
-                      type: integer
-                      minimum: 1
-                      maximum: 65535
-                      description: Enter the Port number of your application (e.g. 80/3000/5000)
+                    HostsPath:
+                      title: Enter the Path of Hosts file
+                      type: string
+                      description: Enter the Hosts file
+                      default: "Dockerfile" 
   
             - properties:
                 stack:
@@ -137,8 +136,14 @@ spec:
       action: shell:run
       input:
         command: ansible-playbook
-        args: ["cafe_app_ansible_bare_metal_deploy/playbook.yml", "-i", "cafe_app_ansible_bare_metal_deploy/hosts"]
-
+        args: ["${{ parameters.extraFields.PlaybookPath }}", "-i", "${{ parameters.extraFields.HostsPath }}"]
+    # - id: cleanup
+    #   name: Remove old container if exists
+    #   if: ${{ parameters.stack == 'Docker' }}
+    #   action: shell:run
+    #   input:
+    #     command: ansible-playbook
+    #     args: ["cafe_app_ansible_bare_metal_deploy/playbook.yml", "-i", "cafe_app_ansible_bare_metal_deploy/hosts"]
 
     # - id: restart
     #   name: Remove old container if exists
