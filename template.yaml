@@ -66,7 +66,7 @@ spec:
   
             - properties:
                 stack:
-                  const: Baremetal
+                  const: Kubernetes
                 extraFields:
                   type: object
                   properties: {}
