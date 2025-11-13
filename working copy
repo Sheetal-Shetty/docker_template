@@ -1,0 +1,187 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: Baremetal-deploy-from-Ansible
+  title: Deploy application from Ansible
+  description: Baremetal deployment of application from Ansible
+spec:
+  owner: user:guest
+  type: service
+
+  
+  parameters:
+    - title: GitHub Repository URL
+      required: 
+        - Github_URL
+        #- Dockerfile
+        #- Port
+      properties:
+        Github_URL:
+          title: Enter you Github URL
+          type: string
+          description: Enter the github URL where your code exists
+          ui:autofocus: true
+
+    - title: Select where you want to deploy your code
+      required:
+        - stack
+      properties:
+        stack:
+          title: Select from below list
+          type: string
+          enum:
+            - Docker
+            - Github pages
+            - Baremetal
+            - Kubernetes
+  
+    - title: Enter below details
+      dependencies:
+        stack:
+          oneOf:
+            - properties:
+                stack:
+                  const: Docker
+                extraFields:          # 👈 wrap everything else inside a schema key
+                  title: Enter the details
+                  type: object
+                  properties:
+                    PlaybookPath:
+                      title: Enter the Path of PlaybookPath
+                      type: string
+                      description: Enter the PlaybookPath
+                      default: "Dockerfile" 
+                    HostsPath:
+                      title: Enter the Path of Hosts file
+                      type: string
+                      description: Enter the Hosts file
+                      default: "Dockerfile" 
+  
+            - properties:
+                stack:
+                  const: Github pages
+                extraFields:
+                  type: object
+                  properties: {}
+  
+            - properties:
+                stack:
+                  const: Baremetal
+                extraFields:
+                  type: object
+                  properties: {}
+  
+            - properties:
+                stack:
+                  const: Kubernetes
+                extraFields:
+                  type: object
+                  properties: {}
+            
+
+        
+        # Dockerfile:
+        #   title: Enter the Path of Dockerfile
+        #   type: string
+        #   description: Enter the Dockerfile path (e.g. build/Dockerfile or enter Dockerfile if it is in root) 
+        #   #ui:autofocus: true
+        # Port:
+        #   title: Enter the Port number
+        #   type: string
+        #   description: Enter the Port number of your application(e.g 80/3000/5000)
+          #ui:autofocus: true
+          
+# parameters:
+#   - title: Fill in project details
+#     required:
+#       - name
+#       - description
+#       - owner
+#     properties:
+#       name:
+#         title: Project Name
+#         type: string
+#         description: What’s the name of your project?
+#         ui:autofocus: true
+          
+  steps:
+    - id: fetch-template
+      name: Fetch template files
+      action: fetch:plain
+      input:
+        url: ${{ parameters.Github_URL }}
+        targetPath: .
+    #Previous code throug this template will appear but it will not execute
+    # - id: build_docker
+    #   name: Build Docker Image
+    #   action: shell:run
+    #   input:
+    #     workingDirectory: ${{ steps.clone.output.path }}
+    #     command: |
+    #       docker build -t my-image:latest .
+
+    # - id: build_docker
+    #   name: Build Docker Image
+    #   if: ${{ parameters.stack == 'Docker' }}
+    #   action: shell:run
+    #   input:
+    #     cwd: ${{ steps.clone.output.path }}
+    #     command: docker 
+    #     args: ["build", "-f", "${{ parameters.extraFields.Dockerfile }}", "-t", "my-image:latest", "."]
+
+
+    - id: cleanup
+      name: Remove old container if exists
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        command: ansible-playbook
+        args: ["${{ parameters.extraFields.PlaybookPath }}", "-i", "${{ parameters.extraFields.HostsPath }}"]
+    # - id: cleanup
+    #   name: Remove old container if exists
+    #   if: ${{ parameters.stack == 'Docker' }}
+    #   action: shell:run
+    #   input:
+    #     command: ansible-playbook
+    #     args: ["cafe_app_ansible_bare_metal_deploy/playbook.yml", "-i", "cafe_app_ansible_bare_metal_deploy/hosts"]
+
+    # - id: restart
+    #   name: Remove old container if exists
+    #   if: ${{ parameters.stack == 'Docker' }}
+    #   action: shell:run
+    #   input:
+    #     command: sudo
+    #     args: ["systemctl", "restart", "apache2"]
+                
+
+    # - id: deploy_docker
+    #   name: Deploy Docker Container
+    #   if: ${{ parameters.stack == 'Docker' }}
+    #   action: shell:run
+    #   input:
+    #     cwd: ${{ steps.clone.output.path }}
+    #     command: bash
+    #     args: 
+    #       - -c
+    #       - |
+    #         set -euo pipefail
+    #         echo "🚀 Starting Ansible Playbook Deployment..."
+    #         PLAYBOOK_PATH="${{ parameters.extraFields.PlaybookPath }}"
+    #         echo "📘 Using playbook: $PLAYBOOK_PATH"
+    #         echo "🔑 Running with sudo and SSH authentication..."
+    #         sudo ansible-playbook cafe_app_ansible_bare_metal_deploy/playbook.yml -i cafe_app_ansible_bare_metal_deploy/hosts -c ssh \
+    #          --extra-vars "ansible_become_pass=$ANSIBLE_SUDO_PASS ansible_ssh_pass=$ANSIBLE_SSH_PASS"
+    #         echo "✅ Deployment completed successfully!"
+
+    # - id: run-echo
+    #   name: Echo Test
+    #   action: shell:run
+    #   input:
+    #     command: echo
+    #     args: ["Hello Backstage!"]
+
+  output:
+    links:
+      - title: "Open Website"
+        url: "http://localhost:89"
+        icon: "website"
