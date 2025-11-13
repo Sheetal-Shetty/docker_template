@@ -111,5 +111,5 @@ spec:
   output:
     links:
       - title: "Open Website"
-        url: "http://172.18.181.50"
+        url: "http://${{ steps.extract-hosts.output.ip }}/"
         icon: "website"
