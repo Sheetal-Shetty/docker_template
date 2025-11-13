@@ -41,7 +41,7 @@ spec:
           oneOf:
             - properties:
                 stack:
-                  const: Kubernetes
+                  const: Baremetal
                 extraFields:          # 👈 wrap everything else inside a schema key
                   title: Enter the details
                   type: object
@@ -132,7 +132,7 @@ spec:
 
     - id: Run Playbook
       name: Remove old container if exists
-      if: ${{ parameters.stack == 'Kubernetes' }}
+      if: ${{ parameters.stack == 'Baremetal' }}
       action: shell:run
       input:
         command: ansible-playbook
