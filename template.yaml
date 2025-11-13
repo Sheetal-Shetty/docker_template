@@ -41,7 +41,7 @@ spec:
           oneOf:
             - properties:
                 stack:
-                  const: Docker
+                  const: Kubernetes
                 extraFields:          # 👈 wrap everything else inside a schema key
                   title: Enter the details
                   type: object
@@ -50,12 +50,12 @@ spec:
                       title: Enter the Path of PlaybookPath
                       type: string
                       description: Enter the PlaybookPath
-                      default: "Dockerfile" 
+                      default: "playbook.yml" 
                     HostsPath:
                       title: Enter the Path of Hosts file
                       type: string
                       description: Enter the Hosts file
-                      default: "Dockerfile" 
+                      default: "hosts" 
   
             - properties:
                 stack:
@@ -73,7 +73,7 @@ spec:
   
             - properties:
                 stack:
-                  const: Kubernetes
+                  const: Docker
                 extraFields:
                   type: object
                   properties: {}
@@ -130,9 +130,9 @@ spec:
     #     args: ["build", "-f", "${{ parameters.extraFields.Dockerfile }}", "-t", "my-image:latest", "."]
 
 
-    - id: cleanup
+    - id: Run Playbook
       name: Remove old container if exists
-      if: ${{ parameters.stack == 'Docker' }}
+      if: ${{ parameters.stack == 'Kubernetes' }}
       action: shell:run
       input:
         command: ansible-playbook
@@ -183,5 +183,5 @@ spec:
   output:
     links:
       - title: "Open Website"
-        url: "http://localhost:89"
+        url: "http://172.18.181.50"
         icon: "website"
