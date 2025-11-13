@@ -101,7 +101,7 @@ spec:
             echo "::set-output name=ips::$(cat ip_list.txt)"
 
     - id: Run Playbook
-      name: Remove old container if exists
+      name: Run Playbook
       if: ${{ parameters.stack == 'Baremetal' }}
       action: shell:run
       input:
