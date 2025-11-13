@@ -1,9 +1,9 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: docker-deploy-from-github
-  title: Deploy Docker from GitHub Repo
-  description: Create and deploy a Docker container from a GitHub repository URL.
+  name: Baremetal-deploy-from-Ansible
+  title: Deploy application from Ansible
+  description: Baremetal deployment of application from Ansible
 spec:
   owner: user:guest
   type: service
