@@ -76,6 +76,30 @@ spec:
 
           
   steps:
+    - id: fetch-repo
+      name: Fetch GitHub Repository Archive
+      action: fetch:plain
+      input:
+        url: ${{ parameters.Github_URL | replace('.git','') }}/archive/refs/heads/main.zip
+        targetPath: repo.zip
+
+  # Step 2: Unzip repository
+  - id: unzip-repo
+    name: Unzip Repository
+    action: shell:run
+    input:
+      command: unzip
+      args: ["repo.zip", "-d", "."]
+
+  # Step 3: Run Docker Compose
+  - id: run-docker-compose
+    name: Run Docker Compose
+    if: ${{ parameters.stack == 'Baremetal' }}
+    action: shell:run
+    input:
+      cwd: ./$(basename ${{ parameters.Github_URL | replace('.git','') }})-main
+      command: docker
+      args: ["compose", "up", "--build"]
     # - id: fetch-template
     #   name: Fetch template files
     #   action: fetch:plain
@@ -83,30 +107,30 @@ spec:
     #     url: ${{ parameters.Github_URL }}
     #     targetPath: .
         
-    - id: fetch-repo
-      name: Fetch GitHub Repository Archive
-      action: fetch:plain
-      input:
-        url: https://github.com/Sheetal-Shetty/Cafe_Dynamic_Website/archive/refs/heads/main.zip
-        targetPath: repo.zip
+    # - id: fetch-repo
+    #   name: Fetch GitHub Repository Archive
+    #   action: fetch:plain
+    #   input:
+    #     url: https://github.com/Sheetal-Shetty/Cafe_Dynamic_Website/archive/refs/heads/main.zip
+    #     targetPath: repo.zip
   
-    # Step 2: Unzip the repo
-    - id: unzip-repo
-      name: Unzip Repository
-      action: shell:run
-      input:
-        command: unzip
-        args: ["repo.zip", "-d", "."]
+    # # Step 2: Unzip the repo
+    # - id: unzip-repo
+    #   name: Unzip Repository
+    #   action: shell:run
+    #   input:
+    #     command: unzip
+    #     args: ["repo.zip", "-d", "."]
   
-    # Step 3: Run Docker Compose
-    - id: run-docker-compose
-      name: Run Docker Compose
-      if: ${{ parameters.stack == 'Baremetal' }}
-      action: shell:run
-      input:
-        cwd: ./Cafe_Dynamic_Website-main
-        command: docker
-        args: ["compose", "up", "--build"]
+    # # Step 3: Run Docker Compose
+    # - id: run-docker-compose
+    #   name: Run Docker Compose
+    #   if: ${{ parameters.stack == 'Baremetal' }}
+    #   action: shell:run
+    #   input:
+    #     cwd: ./Cafe_Dynamic_Website-main
+    #     command: docker
+    #     args: ["compose", "up", "--build"]
 
 
     # - id: unzip-repo
