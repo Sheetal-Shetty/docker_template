@@ -32,7 +32,7 @@ spec:
   steps:
     - id: fetch-template
       name: Fetch template files
-      action: fetch:plain
+      action: fetch:git
       input:
         url: ${{ parameters.Github_URL }}
         targetPath: .   # Fetch into current directory
