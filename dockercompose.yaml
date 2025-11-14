@@ -80,7 +80,7 @@ spec:
       name: Fetch GitHub Repository Archive
       action: fetch:plain
       input:
-        url: ${{ parameters.Github_URL | replace('.git','') }}/archive/refs/heads/main.zip
+        url: https://github.com/Sheetal‑Shetty/Cafe_Dynamic_Website/archive/refs/heads/main.zip
         targetPath: repo.zip
 
   # Step 2: Unzip repository
