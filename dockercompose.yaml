@@ -104,7 +104,7 @@ spec:
       if: ${{ parameters.stack == 'Baremetal' }}
       action: shell:run
       input:
-        cwd: ./$(basename ${{ parameters.Github_URL | replace('.git','') }})-main
+        cwd: ./Cafe_Dynamic_Website-main
         command: docker
         args: ["compose", "up", "--build"]
 
