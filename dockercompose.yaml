@@ -84,7 +84,20 @@ spec:
         targetPath: .
 
   # Step 2: Unzip repository
-
+    - id: list-files
+      name: List fetched files
+      action: shell:run
+      input:
+        cwd: .
+        command: bash
+        args:
+          - -c
+          - |
+            echo "Current working directory: $(pwd)"
+            echo "Immediate files:"
+            ls -al
+            echo "Full folder structure (2 levels deep):"
+            tree -L 2 || find . -maxdepth 2
 
   # Step 3: Run Docker Compose
     - id: run-docker-compose
