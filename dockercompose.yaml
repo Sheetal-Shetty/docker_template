@@ -1,69 +1,85 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: Github-docker-compose-deploy
-  title: Backstage Driven Docker Compose Deployment
-  description: Deploy multi-container applications using Docker Compose.
+  name: Baremetal-deploy-from-Ansible
+  title: Deploy application from Ansible
+  description: Baremetal deployment of application from Ansible
 spec:
   owner: user:guest
   type: service
 
+  
   parameters:
     - title: GitHub Repository URL
-      required:
+      required: 
         - Github_URL
+        #- Dockerfile
+        #- Port
       properties:
         Github_URL:
-          title: Enter your Github URL
+          title: Enter you Github URL
           type: string
-          description: Enter the GitHub repository URL containing your docker-compose.yml
+          description: Enter the github URL where your code exists
           ui:autofocus: true
 
-    - title: Docker Compose Configuration
+    - title: Select where you want to deploy your code
       required:
-        - ComposeFile
+        - stack
       properties:
-        ComposeFile:
-          title: Docker Compose File Path
+        stack:
+          title: Select from below list
           type: string
-          description: Path to docker-compose.yml (relative to repo root)
-          default: "docker-compose.yml"
+          enum:
+            - Docker
+            - Github pages
+            - Baremetal
+            - Kubernetes
+  
+    - title: Enter below details
+      dependencies:
+        stack:
+          oneOf:
+            - properties:
+                stack:
+                  const: Baremetal
+                extraFields:          # 👈 wrap everything else inside a schema key
+                  title: Enter the details
+                  type: object
+                  properties:
+                    PlaybookPath:
+                      title: Enter the Path of dockercompose
+                      type: string
+                      description: Enter the PlaybookPath
+                      default: "docker-compose.yml" 
+  
+            - properties:
+                stack:
+                  const: Github pages
+                extraFields:
+                  type: object
+                  properties: {}
+  
+            - properties:
+                stack:
+                  const: Kubernetes
+                extraFields:
+                  type: object
+                  properties: {}
+  
+            - properties:
+                stack:
+                  const: Docker
+                extraFields:
+                  type: object
+                  properties: {}
+            
 
+          
   steps:
-    - id: fetch-template
-      name: Fetch template files
-      action: fetch:plain
-      input:
-        url: ${{ parameters.Github_URL }}
-        targetPath: .   # Fetch into current directory
-
-    - id: docker-compose-up
-      name: Deploy Containers via Docker Compose
+    - id: Run Playbook
+      name: Run Playbook
+      if: ${{ parameters.stack == 'Baremetal' }}
       action: shell:run
       input:
-        cwd: .   # Use the current directory
-        command: bash
-        args:
-          - -c
-          - |
-            set -e
-            echo "Deploying application using Docker Compose..."
-            
-            if [ -f "${{ parameters.ComposeFile }}" ]; then
-              echo "Stopping any existing containers..."
-              docker-compose -f "${{ parameters.ComposeFile }}" down || true
-              
-              echo "Starting containers..."
-              docker-compose -f "${{ parameters.ComposeFile }}" up -d
-              
-              echo "Containers started successfully!"
-            else
-              echo "Error: Docker Compose file not found at '${{ parameters.ComposeFile }}'"
-              exit 1
-            fi
-
-  output:
-    links:
-      - title: "View Docker Compose Application"
-        url: "http://localhost"   # Ports are defined inside docker-compose.yml
-        icon: "docker"
+        command: sudo
+        args: ["${{ docker-compose }}", "up", "${{ --build }}"]
