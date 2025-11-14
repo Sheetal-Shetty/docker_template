@@ -87,7 +87,7 @@ spec:
       name: Fetch GitHub Repository Archive
       action: fetch:plain
       input:
-        url: https://github.com/Sheetal-Shetty/Cafe_Dynamic_Website/archive/refs/heads/main.zip
+        url: ./Cafe_Dynamic_Website-main
         targetPath: repo.zip
   
     # Step 2: Unzip the repo
