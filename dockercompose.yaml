@@ -76,10 +76,51 @@ spec:
 
           
   steps:
+    - id: fetch-template
+      name: Fetch template files
+      action: fetch:plain
+      input:
+        url: ${{ parameters.Github_URL }}
+        targetPath: .
+        
     - id: Run Playbook
       name: Run Playbook
       if: ${{ parameters.stack == 'Baremetal' }}
       action: shell:run
       input:
-        command: sudo
-        args: ["docker-compose", "up", "--build"]
+        command: docker
+        args: ["compose", "up", "--build"]
+
+    # - id: unzip-repo
+    #   name: Unzip Repository
+    #   action: shell:run
+    #   input:
+    #     command: unzip
+    #     args: ["repo.zip", "-d", "."]
+
+    # # Step 3: Deploy containers via Docker Compose
+    # - id: docker-compose-up
+    #   name: Deploy Containers via Docker Compose
+    #   action: shell:run
+    #   input:
+    #     cwd: ./$(basename ${{ parameters.Github_URL | replace('.git','') }})-main
+    #     command: bash
+    #     args:
+    #       - -c
+    #       - |
+    #         set -e
+    #         echo "Deploying application using Docker Compose..."
+            
+    #         if [ -f "${{ parameters.ComposeFile }}" ]; then
+    #           echo "Stopping any existing containers..."
+    #           docker-compose -f "${{ parameters.ComposeFile }}" down || true
+              
+    #           echo "Starting containers..."
+    #           docker-compose -f "${{ parameters.ComposeFile }}" up -d
+              
+    #           echo "Containers started successfully!"
+    #         else
+    #           echo "Error: docker-compose.yml not found at '${{ parameters.ComposeFile }}'"
+    #           exit 1
+    #         fi
+
