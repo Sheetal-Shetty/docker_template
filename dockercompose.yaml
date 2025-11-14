@@ -41,7 +41,7 @@ spec:
       name: Deploy Containers via Docker Compose
       action: shell:run
       input:
-        cwd: ${{ steps.clone.output.path }}
+        cwd: .
         command: bash
         args:
           - -c
