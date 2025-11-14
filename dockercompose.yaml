@@ -84,22 +84,22 @@ spec:
         targetPath: repo.zip
 
   # Step 2: Unzip repository
-  - id: unzip-repo
-    name: Unzip Repository
-    action: shell:run
-    input:
-      command: unzip
-      args: ["repo.zip", "-d", "."]
+    - id: unzip-repo
+      name: Unzip Repository
+      action: shell:run
+      input:
+        command: unzip
+        args: ["repo.zip", "-d", "."]
 
   # Step 3: Run Docker Compose
-  - id: run-docker-compose
-    name: Run Docker Compose
-    if: ${{ parameters.stack == 'Baremetal' }}
-    action: shell:run
-    input:
-      cwd: ./$(basename ${{ parameters.Github_URL | replace('.git','') }})-main
-      command: docker
-      args: ["compose", "up", "--build"]
+    - id: run-docker-compose
+      name: Run Docker Compose
+      if: ${{ parameters.stack == 'Baremetal' }}
+      action: shell:run
+      input:
+        cwd: ./$(basename ${{ parameters.Github_URL | replace('.git','') }})-main
+        command: docker
+        args: ["compose", "up", "--build"]
     # - id: fetch-template
     #   name: Fetch template files
     #   action: fetch:plain
