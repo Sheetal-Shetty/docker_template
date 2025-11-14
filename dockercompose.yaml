@@ -82,4 +82,4 @@ spec:
       action: shell:run
       input:
         command: sudo
-        args: ["${{ docker-compose }}", "up", "${{ --build }}"]
+        args: ["docker-compose", "up", "--build"]
