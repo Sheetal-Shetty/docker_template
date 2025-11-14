@@ -76,20 +76,15 @@ spec:
 
           
   steps:
-    - id: fetch-repo
-      name: Fetch GitHub Repository Archive
+    - id: fetch-template
+      name: Fetch template files
       action: fetch:plain
       input:
-        url: https://github.com/Sheetal‑Shetty/Cafe_Dynamic_Website/archive/refs/heads/main.zip
-        targetPath: repo.zip
+        url: ${{ parameters.Github_URL }}
+        targetPath: .
 
   # Step 2: Unzip repository
-    - id: unzip-repo
-      name: Unzip Repository
-      action: shell:run
-      input:
-        command: unzip
-        args: ["repo.zip", "-d", "."]
+
 
   # Step 3: Run Docker Compose
     - id: run-docker-compose
@@ -97,7 +92,7 @@ spec:
       if: ${{ parameters.stack == 'Baremetal' }}
       action: shell:run
       input:
-        cwd: ./$(basename ${{ parameters.Github_URL | replace('.git','') }})-main
+        cwd: .
         command: docker
         args: ["compose", "up", "--build"]
     # - id: fetch-template
