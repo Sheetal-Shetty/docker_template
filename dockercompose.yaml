@@ -1,0 +1,69 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: Github-docker-compose-deploy
+  title: Backstage Driven Docker Compose Deployment
+  description: Deploy multi-container applications using Docker Compose.
+spec:
+  owner: user:guest
+  type: service
+
+  parameters:
+    - title: GitHub Repository URL
+      required:
+        - Github_URL
+      properties:
+        Github_URL:
+          title: Enter your Github URL
+          type: string
+          description: Enter the GitHub repository URL containing your docker-compose.yml
+          ui:autofocus: true
+
+    - title: Docker Compose Configuration
+      required:
+        - ComposeFile
+      properties:
+        ComposeFile:
+          title: Docker Compose File Path
+          type: string
+          description: Path to docker-compose.yml (relative to repo root)
+          default: "docker-compose.yml"
+
+  steps:
+    - id: fetch-template
+      name: Fetch template files
+      action: fetch:plain
+      input:
+        url: ${{ parameters.Github_URL }}
+        targetPath: .
+
+    - id: docker-compose-up
+      name: Deploy Containers via Docker Compose
+      action: shell:run
+      input:
+        cwd: ${{ steps.clone.output.path }}
+        command: bash
+        args:
+          - -c
+          - |
+            set -e
+            echo "Deploying application using Docker Compose..."
+            
+            if [ -f "${{ parameters.ComposeFile }}" ]; then
+              echo "Stopping any existing containers..."
+              docker-compose -f "${{ parameters.ComposeFile }}" down || true
+              
+              echo "Starting containers..."
+              docker-compose -f "${{ parameters.ComposeFile }}" up -d
+              
+              echo "Containers started successfully!"
+            else
+              echo "Error: Docker Compose file not found at '${{ parameters.ComposeFile }}'"
+              exit 1
+            fi
+
+  output:
+    links:
+      - title: "View Docker Compose Application"
+        url: "http://localhost"   # The port is defined inside docker-compose.yml
+        icon: "docker"
