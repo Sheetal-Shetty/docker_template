@@ -93,7 +93,15 @@ spec:
       input:
         url: ${{ parameters.Github_URL }}
         targetPath: .
-
+    - id: delete_network
+      name: Create_network
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        cwd: ${{ steps.clone.output.path }}
+        command: docker 
+        args: ["network", "rm", "new-network"]
+ 
     - id: Create_network
       name: Create_network
       if: ${{ parameters.stack == 'Docker' }}
