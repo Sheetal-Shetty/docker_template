@@ -111,14 +111,7 @@ spec:
         command: docker 
         args: ["network", "create", "new-network"]
 
-    - id: build_docker_2
-      name: build_docker_2
-      if: ${{ parameters.stack == 'Docker' }}
-      action: shell:run
-      input:
-        cwd: ${{ steps.fetch-template.output.path }}/mompopdb
-        command: docker 
-        args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
+   
 
     - id: build_docker_1
       name: build_docker_1
@@ -145,7 +138,14 @@ spec:
         command: ls
         args: ["-R", "."]
         
-
+    - id: build_docker_2
+      name: build_docker_2
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        cwd: ${{ steps.fetch-template.output.path }}/mompopdb
+        command: docker 
+        args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
 
 
     - id: cleanup_2
