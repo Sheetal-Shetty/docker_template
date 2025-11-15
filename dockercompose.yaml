@@ -46,11 +46,22 @@ spec:
                   title: Enter the details
                   type: object
                   properties:
-                    PlaybookPath:
-                      title: Enter the Path of dockercompose
+                    WebPath:
+                      title: Enter the Path of web docker file
                       type: string
                       description: Enter the PlaybookPath
-                      default: "docker-compose.yml" 
+                      default: "mompopcafe/Dockerfile" 
+                    DBPath:
+                      title: Enter the Path of db docker file
+                      type: string
+                      description: Enter the PlaybookPath
+                      default: "mompopdb/Dockerfile" 
+                    Port:
+                      title: Enter the Port number
+                      type: integer
+                      minimum: 1
+                      maximum: 65535
+                      description: Enter the Port number of your application (e.g. 80/3000/5000)
   
             - properties:
                 stack:
@@ -83,31 +94,75 @@ spec:
         url: ${{ parameters.Github_URL }}
         targetPath: .
 
-  # Step 2: Unzip repository
-    - id: list-files
-      name: List fetched files
+    - id: Create_network
+      name: Build Docker Image
+      if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: .
-        command: bash
-        args:
-          - -c
-          - |
-            echo "Current working directory: $(pwd)"
-            echo "Immediate files:"
-            ls -al
-            echo "Full folder structure (2 levels deep):"
-            tree -L 2 || find . -maxdepth 2
+        cwd: ${{ steps.clone.output.path }}
+        command: docker 
+        args: ["network", "create", "new-network"]
 
-  # Step 3: Run Docker Compose
-    - id: run-docker-compose
-      name: Run Docker Compose
-      if: ${{ parameters.stack == 'Baremetal' }}
+    - id: build_docker_1
+      name: Build Docker Image
+      if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: .
+        cwd: ${{ steps.clone.output.path }}
+        command: docker 
+        args: ["build", "-f", "${{ parameters.extraFields.WebPath }}", "-t", "new-image:latest", "."]
+        
+    - id: build_docker_2
+      name: Build Docker Image
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        cwd: ${{ steps.clone.output.path }}
+        command: docker 
+        args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
+
+
+    - id: cleanup_1
+      name: Remove old container if exists
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
         command: docker
-        args: ["compose", "up", "--build"]
+        args: ["rm", "-f", "Cafe-container"]
+
+    - id: cleanup_2
+      name: Remove old container if exists
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        command: docker
+        args: ["rm", "-f", "DB-container"]
+                
+
+    - id: deploy_docker_1
+      name: Deploy Docker Container
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        cwd: ${{ steps.clone.output.path }}
+        command: docker
+        args: ["run", "--name", "Cafe-container", "--network", "new-network", "-it", "-d", "-p", "89:${{ parameters.extraFields.Port }}", "new-image:latest"]
+
+    - id: deploy_docker_2
+      name: Deploy Docker Container
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        cwd: ${{ steps.clone.output.path }}
+        command: docker
+        args: ["run", "--name", "DB-container", "--network", "new-network", "-it", "-d", "-p", "3307:3306", "new-db-image:latest"]
+
+  
+  output:
+    links:
+      - title: "Open Website"
+        url: "http://localhost:89"
+        icon: "website"
     # - id: fetch-template
     #   name: Fetch template files
     #   action: fetch:plain
