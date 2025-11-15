@@ -93,14 +93,14 @@ spec:
       input:
         url: ${{ parameters.Github_URL }}
         targetPath: .
-    # - id: delete_network
-    #   name: delete_network
-    #   if: ${{ parameters.stack == 'Docker' }}
-    #   action: shell:run
-    #   input:
-    #     cwd: .
-    #     command: docker 
-    #     args: ["network", "rm", "new-network"]
+    - id: delete_network
+      name: delete_network
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        cwd: .
+        command: docker 
+        args: ["network", "rm", "new-network"]
  
     - id: Create_network
       name: Create_network
@@ -135,7 +135,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.fetch-template.output.path }}/mompopdb
+        cwd: ${{ steps.fetch-template.output.path }}
         command: docker 
         args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
 
