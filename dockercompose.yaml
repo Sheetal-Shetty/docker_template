@@ -130,12 +130,12 @@ spec:
         command: docker
         args: ["rm", "-f", "Cafe-container"]
         
-    - id: build_docker_db
+    - id: build_docker_db_1
       name: build_docker_db
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: "${{ steps.fetch-template.output.path }}/mompopdb"
+        cwd: ${{ steps.fetch-template.output.path }}/mompopdb
         command: docker 
         args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
 
