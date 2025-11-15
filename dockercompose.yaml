@@ -130,8 +130,8 @@ spec:
         command: docker
         args: ["rm", "-f", "Cafe-container"]
         
-    - id: build_docker_2
-      name: build_docker_2
+    - id: build_docker_db
+      name: build_docker_db
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
