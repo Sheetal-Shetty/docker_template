@@ -94,7 +94,7 @@ spec:
         url: ${{ parameters.Github_URL }}
         targetPath: .
     - id: delete_network
-      name: Create_network
+      name: delete_network
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
