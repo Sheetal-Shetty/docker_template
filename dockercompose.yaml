@@ -92,13 +92,13 @@ spec:
       action: fetch:plain
       input:
         url: ${{ parameters.Github_URL }}
-        targetPath: .
+        targetPath: ./site
     - id: delete_network
       name: delete_network
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: .
+        cwd: ./site
         command: docker 
         args: ["network", "rm", "new-network"]
  
@@ -107,7 +107,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.fetch-template.output.path }}
+        cwd: ./site
         command: docker 
         args: ["network", "create", "new-network"]
 
@@ -118,7 +118,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.fetch-template.output.path }}
+        cwd: ./site
         command: docker 
         args: ["build", "-f", "${{ parameters.extraFields.WebPath }}", "-t", "new-image:latest", "."]
 
@@ -131,11 +131,12 @@ spec:
         args: ["rm", "-f", "Cafe-container"]
         
     - id: build_docker_db_1
-      name: build_docker_db_1
+      name: build_docker_db
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.fetch-template.output.path }}
+        #cwd: ${{ steps.fetch-template.output.path }}
+        cwd: ./site/mompopdb
         command: docker 
         args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
 
@@ -154,7 +155,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.fetch-template.output.path }}
+        cwd: ./site
         command: docker
         args: ["run", "--name", "Cafe-container", "--network", "new-network", "-it", "-d", "-p", "89:${{ parameters.extraFields.Port }}", "new-image:latest"]
 
@@ -163,7 +164,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.fetch-template.output.path }}
+        cwd: ./site
         command: docker
         args: ["run", "--name", "DB-container", "--network", "new-network", "-it", "-d", "-p", "3307:3306", "new-db-image:latest"]
 
