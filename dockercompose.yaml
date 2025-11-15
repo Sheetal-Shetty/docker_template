@@ -79,7 +79,7 @@ spec:
   
             - properties:
                 stack:
-                  const: Docker
+                  const: Baremetal
                 extraFields:
                   type: object
                   properties: {}
