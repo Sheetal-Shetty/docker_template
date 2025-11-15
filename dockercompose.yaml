@@ -98,7 +98,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.fetch-template.output.path }}
+        cwd: .
         command: docker 
         args: ["network", "rm", "new-network"]
  
@@ -131,7 +131,7 @@ spec:
         args: ["rm", "-f", "Cafe-container"]
         
     - id: build_docker_db_1
-      name: build_docker_db
+      name: build_docker_db_1
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
