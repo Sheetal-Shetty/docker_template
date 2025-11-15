@@ -95,7 +95,7 @@ spec:
         targetPath: .
 
     - id: Create_network
-      name: Build Docker Image
+      name: Create_network
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
@@ -104,16 +104,24 @@ spec:
         args: ["network", "create", "new-network"]
 
     - id: build_docker_1
-      name: Build Docker Image
+      name: build_docker_1
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
         cwd: ${{ steps.clone.output.path }}
         command: docker 
         args: ["build", "-f", "${{ parameters.extraFields.WebPath }}", "-t", "new-image:latest", "."]
+
+    - id: cleanup_1
+      name: cleanup_1
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        command: docker
+        args: ["rm", "-f", "Cafe-container"]
         
     - id: build_docker_2
-      name: Build Docker Image
+      name: build_docker_2
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
@@ -122,16 +130,8 @@ spec:
         args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
 
 
-    - id: cleanup_1
-      name: Remove old container if exists
-      if: ${{ parameters.stack == 'Docker' }}
-      action: shell:run
-      input:
-        command: docker
-        args: ["rm", "-f", "Cafe-container"]
-
     - id: cleanup_2
-      name: Remove old container if exists
+      name: cleanup_2
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
@@ -140,7 +140,7 @@ spec:
                 
 
     - id: deploy_docker_1
-      name: Deploy Docker Container
+      name: deploy_docker_1
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
@@ -149,7 +149,7 @@ spec:
         args: ["run", "--name", "Cafe-container", "--network", "new-network", "-it", "-d", "-p", "89:${{ parameters.extraFields.Port }}", "new-image:latest"]
 
     - id: deploy_docker_2
-      name: Deploy Docker Container
+      name: deploy_docker_2
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
