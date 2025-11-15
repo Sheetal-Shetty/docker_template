@@ -41,7 +41,7 @@ spec:
           oneOf:
             - properties:
                 stack:
-                  const: Baremetal
+                  const: Docker
                 extraFields:          # 👈 wrap everything else inside a schema key
                   title: Enter the details
                   type: object
