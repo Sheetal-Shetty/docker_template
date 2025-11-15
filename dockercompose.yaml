@@ -116,7 +116,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ${{ steps.fetch-template.output.path }}
+        cwd: ${{ steps.fetch-template.output.path }}/mompopdb
         command: docker 
         args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
 
