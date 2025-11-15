@@ -98,7 +98,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ./site
+        cwd: .
         command: docker 
         args: ["network", "rm", "new-network"]
  
@@ -107,7 +107,7 @@ spec:
       if: ${{ parameters.stack == 'Docker' }}
       action: shell:run
       input:
-        cwd: ./site
+        cwd: .
         command: docker 
         args: ["network", "create", "new-network"]
 
