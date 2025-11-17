@@ -99,7 +99,10 @@ spec:
             HOSTFILE="${{ parameters.extraFields.HostsPath }}"
             IP=$(grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' "$HOSTFILE" | head -n 1)
             echo "Extracted IP: $IP"
-            echo "ip=$IP" >> ${{ steps.extract-ip.output.file }}
+            echo "$IP" > ip.txt
+
+      output:
+        ip: ${{ steps.extract-ip.output.file }}
     # - id: extract-hosts
     #   name: Extract IPs from hosts file
     #   if: ${{ parameters.stack == 'Baremetal' }}
@@ -123,7 +126,6 @@ spec:
         args: ["${{ parameters.extraFields.PlaybookPath }}", "-i", "${{ parameters.extraFields.HostsPath }}"]
 
   output:
-    links:
-      - title: "Open Website"
-        url: "http://${{ steps.extract-ip.output.ip }}/"
-        icon: "website"
+    ipLink:
+      title: "Open Web Application"
+      url: "http://${{ steps.extract-ip.output.ip }}"
