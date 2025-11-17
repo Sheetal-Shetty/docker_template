@@ -111,16 +111,6 @@ spec:
         command: docker 
         args: ["network", "create", "new-network"]
 
-   
-
-    - id: build_docker_1
-      name: build_docker_1
-      if: ${{ parameters.stack == 'Docker' }}
-      action: shell:run
-      input:
-        cwd: ${{ steps.fetch-template.output.path }}
-        command: docker 
-        args: ["build", "-f", "${{ parameters.extraFields.WebPath }}", "-t", "new-image:latest", "."]
 
     - id: cleanup_1
       name: cleanup_1
@@ -139,6 +129,16 @@ spec:
         cwd: ${{ steps.fetch-template.output.path }}
         command: docker 
         args: ["build", "-f", "${{ parameters.extraFields.DBPath }}", "-t", "new-db-image:latest", "."]
+
+
+    - id: build_docker_1
+      name: build_docker_1
+      if: ${{ parameters.stack == 'Docker' }}
+      action: shell:run
+      input:
+        cwd: ${{ steps.fetch-template.output.path }}
+        command: docker 
+        args: ["build", "-f", "${{ parameters.extraFields.WebPath }}", "-t", "new-image:latest", "."]
 
 
     - id: cleanup_2
