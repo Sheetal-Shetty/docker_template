@@ -94,10 +94,11 @@ spec:
         url: ${{ parameters.Github_URL }}
         targetPath: ./site
 
-    - id: fetch.sql
+    - id: fetch sql
+    name: Fetch sql files
       action: fetch:template
       input:
-        url: ${{ parameters.Github_URL }}/mompopdb/create-db.sql
+        url: ${{ parameters.Github_URL }}/raw/main/mompopdb/create-db.sql
         targetPath: ./site/create-db.sql
 
     - id: delete_network
