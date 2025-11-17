@@ -101,12 +101,10 @@ spec:
     #         echo "::set-output name=ips::$(cat ip_list.txt)"
 
     - id: extract-ip
-      name: Extract IP from hosts file
+      name: Extract IP from hosts file-1
       action: shell:run
-      input:
-        script: |
+        command: |
           HOSTFILE="/tmp/hosts"
-          # Extract first IP-only line
           IP=$(grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' "$HOSTFILE" | head -n 1)
           echo "Extracted IP: $IP"
           echo "::set-output name=ip::$IP"
