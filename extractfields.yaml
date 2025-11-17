@@ -89,7 +89,7 @@ spec:
         targetPath: .
 
     - id: extract-ip
-      name: Extract IP from hosts file-2
+      name: Extract IP from hosts file-3
       action: shell:run
       input:
         command: bash
