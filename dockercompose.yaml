@@ -95,7 +95,7 @@ spec:
         targetPath: ./site
 
     - id: fetch sql
-    name: Fetch sql files
+      name: Fetch sql files
       action: fetch:template
       input:
         url: ${{ parameters.Github_URL }}/raw/main/mompopdb/create-db.sql
