@@ -87,6 +87,19 @@ spec:
       input:
         url: ${{ parameters.Github_URL }}
         targetPath: .
+
+    - id: extract-ip
+      name: Extract IP from hosts file-2
+      action: shell:run
+      input:
+        command: bash
+        args:
+          - -c
+          - |
+            HOSTFILE="${{ parameters.extraFields.HostsPath }}"
+            IP=$(grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' "$HOSTFILE" | head -n 1)
+            echo "Extracted IP: $IP"
+            echo "ip=$IP" >> ${{ steps.extract-ip.output.file }}
     # - id: extract-hosts
     #   name: Extract IPs from hosts file
     #   if: ${{ parameters.stack == 'Baremetal' }}
@@ -100,14 +113,6 @@ spec:
     #         grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' "${{ parameters.extraFields.HostsPath }}" | tr '\n' ',' | sed 's/,$//' > ip_list.txt
     #         echo "::set-output name=ips::$(cat ip_list.txt)"
 
-    - id: extract-ip
-      name: Extract IP from hosts file-1
-      action: shell:run
-        command: |
-          HOSTFILE="/tmp/hosts"
-          IP=$(grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' "$HOSTFILE" | head -n 1)
-          echo "Extracted IP: $IP"
-          echo "::set-output name=ip::$IP"
 
     - id: Run Playbook
       name: Run Playbook
